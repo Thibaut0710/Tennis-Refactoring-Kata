@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Tennis
 {
     public class TennisGame2 : ITennisGame
@@ -5,129 +7,75 @@ namespace Tennis
         private int p1point;
         private int p2point;
 
-        private string p1res = "";
-        private string p2res = "";
         private string player1Name;
         private string player2Name;
+
+        private static readonly string[] pointDescriptions = { "Love", "Fifteen", "Thirty", "Forty" };
+
+        // Historique des points
+        private List<string> scoreHistory;
 
         public TennisGame2(string player1Name, string player2Name)
         {
             this.player1Name = player1Name;
-            p1point = 0;
             this.player2Name = player2Name;
+            p1point = 0;
+            p2point = 0;
+            scoreHistory = new List<string>();
+            RecordScore(); // Enregistrer le score initial
         }
 
         public string GetScore()
         {
-            var score = "";
-            if (p1point == p2point && p1point < 3)
+            string score;
+            if (p1point == p2point)
             {
-                if (p1point == 0)
-                    score = "Love";
-                if (p1point == 1)
-                    score = "Fifteen";
-                if (p1point == 2)
-                    score = "Thirty";
-                score += "-All";
+                score = p1point < 3 ? $"{pointDescriptions[p1point]}-All" : "Deuce";
             }
-            if (p1point == p2point && p1point > 2)
-                score = "Deuce";
-
-            if (p1point > 0 && p2point == 0)
+            else if (p1point >= 4 || p2point >= 4)
             {
-                if (p1point == 1)
-                    p1res = "Fifteen";
-                if (p1point == 2)
-                    p1res = "Thirty";
-                if (p1point == 3)
-                    p1res = "Forty";
-
-                p2res = "Love";
-                score = p1res + "-" + p2res;
+                int scoreDifference = p1point - p2point;
+                if (scoreDifference == 1) score = "Advantage player1";
+                else if (scoreDifference == -1) score = "Advantage player2";
+                else if (scoreDifference >= 2) score = "Win for player1";
+                else score = "Win for player2";
             }
-            if (p2point > 0 && p1point == 0)
+            else
             {
-                if (p2point == 1)
-                    p2res = "Fifteen";
-                if (p2point == 2)
-                    p2res = "Thirty";
-                if (p2point == 3)
-                    p2res = "Forty";
-
-                p1res = "Love";
-                score = p1res + "-" + p2res;
+                score = $"{pointDescriptions[p1point]}-{pointDescriptions[p2point]}";
             }
 
-            if (p1point > p2point && p1point < 4)
-            {
-                if (p1point == 2)
-                    p1res = "Thirty";
-                if (p1point == 3)
-                    p1res = "Forty";
-                if (p2point == 1)
-                    p2res = "Fifteen";
-                if (p2point == 2)
-                    p2res = "Thirty";
-                score = p1res + "-" + p2res;
-            }
-            if (p2point > p1point && p2point < 4)
-            {
-                if (p2point == 2)
-                    p2res = "Thirty";
-                if (p2point == 3)
-                    p2res = "Forty";
-                if (p1point == 1)
-                    p1res = "Fifteen";
-                if (p1point == 2)
-                    p1res = "Thirty";
-                score = p1res + "-" + p2res;
-            }
-
-            if (p1point > p2point && p2point >= 3)
-            {
-                score = "Advantage player1";
-            }
-
-            if (p2point > p1point && p1point >= 3)
-            {
-                score = "Advantage player2";
-            }
-
-            if (p1point >= 4 && p2point >= 0 && (p1point - p2point) >= 2)
-            {
-                score = "Win for player1";
-            }
-            if (p2point >= 4 && p1point >= 0 && (p2point - p1point) >= 2)
-            {
-                score = "Win for player2";
-            }
+            RecordScore();
             return score;
+        }
+
+        private void RecordScore()
+        {
+            scoreHistory.Add($"{pointDescriptions[Math.Min(p1point, 3)]}-{pointDescriptions[Math.min(p2point, 3)]}");
         }
 
         public void SetP1Score(int number)
         {
-            for (int i = 0; i < number; i++)
-            {
-                P1Score();
-            }
+            p1point += number;
+            RecordScore();
         }
 
         public void SetP2Score(int number)
         {
-            for (var i = 0; i < number; i++)
-            {
-                P2Score();
-            }
+            p2point += number;
+            RecordScore();
         }
 
         private void P1Score()
         {
             p1point++;
+            RecordScore();
         }
 
         private void P2Score()
         {
             p2point++;
+            RecordScore();
         }
 
         public void WonPoint(string player)
@@ -138,6 +86,19 @@ namespace Tennis
                 P2Score();
         }
 
+        // Nouvelle fonctionnalité : Affichage de l'historique des scores
+        public List<string> GetScoreHistory()
+        {
+            return new List<string>(scoreHistory);
+        }
+
+        // Nouvelle fonctionnalité : Réinitialisation du jeu
+        public void ResetGame()
+        {
+            p1point = 0;
+            p2point = 0;
+            scoreHistory.Clear();
+            RecordScore(); // Enregistrer le score initial après la réinitialisation
+        }
     }
 }
-
