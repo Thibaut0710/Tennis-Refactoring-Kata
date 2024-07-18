@@ -65,6 +65,8 @@ namespace Tennis.Tests
         {
             var game = new TennisGame2("player1", "player2");
             CheckAllScores(game, p1, p2, expected);
+            CheckScoreHistory(game, p1, p2);
+            CheckResetGame(game);
         }
 
         [Theory]
@@ -74,6 +76,7 @@ namespace Tennis.Tests
             var game = new TennisGame3("player1", "player2");
             CheckAllScores(game, p1, p2, expected);
         }
+
         [Theory]
         [ClassData(typeof(TestDataGenerator))]
         public void Tennis4Test(int p1, int p2, string expected)
@@ -81,6 +84,7 @@ namespace Tennis.Tests
             var game = new TennisGame4("player1", "player2");
             CheckAllScores(game, p1, p2, expected);
         }
+
         [Theory]
         [ClassData(typeof(TestDataGenerator))]
         public void Tennis5Test(int p1, int p2, string expected)
@@ -88,6 +92,7 @@ namespace Tennis.Tests
             var game = new TennisGame5("player1", "player2");
             CheckAllScores(game, p1, p2, expected);
         }
+
         [Theory]
         [ClassData(typeof(TestDataGenerator))]
         public void Tennis6Test(int p1, int p2, string expected)
@@ -95,6 +100,7 @@ namespace Tennis.Tests
             var game = new TennisGame6("player1", "player2");
             CheckAllScores(game, p1, p2, expected);
         }
+
         private void CheckAllScores(ITennisGame game, int player1Score, int player2Score, string expectedScore)
         {
             var highestScore = Math.Max(player1Score, player2Score);
@@ -107,6 +113,19 @@ namespace Tennis.Tests
             }
 
             Assert.Equal(expectedScore, game.GetScore());
+        }
+
+        private void CheckScoreHistory(TennisGame2 game, int player1Score, int player2Score)
+        {
+            var history = game.GetScoreHistory();
+            Assert.NotEmpty(history);
+        }
+
+        private void CheckResetGame(TennisGame2 game)
+        {
+            game.ResetGame();
+            Assert.Equal("Love-All", game.GetScore());
+            Assert.Empty(game.GetScoreHistory());
         }
     }
 }
