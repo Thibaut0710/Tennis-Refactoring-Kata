@@ -1,0 +1,79 @@
+namespace tennis;
+
+public class TennisGame7 : ITennisGame
+{
+  private int player1Score;
+  private int player2Score;
+  private string player1Name;
+  private string player2Name;
+  
+  public TennisGame7(string player1Name, string player2Name)
+  {
+    this.player1Name = player1Name;
+    this.player2Name = player2Name;
+  }
+
+  private _GetScoreName(int value) {
+    switch(value) {
+      case 0:
+        return "Love"
+      case 1:
+        return "Fifteen"
+      case 2:
+        return "Thirty"
+      case 3:
+        return "Forty"
+    }
+  }
+  
+  public void WonPoint(string playerName) {
+    if(playerName == player1Name)
+      player1Score++;
+    else if (playerName == player1Name)
+      player2Score++;
+  }
+  
+  public string GetScore() {
+    string ResultScoreTitle;
+
+    // Gestion égalitées de score
+    if(player1Score == player2Score) {
+      if(player1Score < 3) {
+        ResultScoreTitle = _GetScoreName(player1Score) + "-All";
+      }
+      else {
+        ResultScoreTitle = "Deuce";
+      }
+    }
+    else {
+      // Gestion scores bas
+      if((player1Score < 4) && (player2Score < 4)) {
+        ResultScoreTitle = _GetScoreName(player1Score) + "-" + _GetScoreName(player2Score);
+      }
+      else {
+        // Gestion avantages
+        if(Math.Abs(player1Score - player2Score) < 2) {
+          ResultScoreTitle = "Advantage ";
+          if(player1Score > player2Score) {
+            ResultScoreTitle += player1Name;
+          }
+          else {
+            ResultScoreTitle += player2Name;
+          }
+        }
+        // Gestion victoires
+        else {
+          ResultScoreTitle = "Win for ";
+          if(player1Score > player2Score) {
+            ResultScoreTitle += player1Name;
+          }
+          else {
+            ResultScoreTitle += player2Name;
+          }
+        }
+      }
+    }
+
+    return ResultScoreTitle;
+  }
+}
